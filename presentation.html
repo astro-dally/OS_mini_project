@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Root - CipherMaster OS Project</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050709;
+            --accent-cyan: #00f2ff;
+            --accent-magenta: #ff00ea;
+            --accent-green: #00ff95;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            cursor: default;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-dark);
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--text-primary);
+        }
+
+        canvas#particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/Users/dally/.gemini/antigravity/brain/64d2ecb0-4350-4d28-91ad-85856ee13635/encryption_presentation_bg_1770222917634.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            filter: blur(4px);
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Slide System */
+        .slide {
+            position: absolute;
+            width: 90%;
+            max-width: 1200px;
+            height: 75vh;
+            padding: 3rem;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.95) translateY(30px);
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: scale(1) translateY(0);
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-cyan);
+            border-left: 4px solid var(--accent-magenta);
+            padding-left: 15px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Elements */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 242, 255, 0.03);
+            transform: translateY(-5px);
+        }
+
+        /* Controls & UI */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 1rem 0;
+            align-items: center;
+            justify-content: center;
+        }
+
+        input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            width: 80px;
+            text-align: center;
+        }
+
+        .action-btn {
+            background: var(--accent-cyan);
+            color: black;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .action-btn:hover {
+            filter: brightness(1.2);
+            transform: scale(1.05);
+        }
+
+        /* Cipher Wheels & Bits */
+        .wheel-container {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px dashed var(--accent-cyan);
+            position: relative;
+            transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .wheel-char {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            color: var(--accent-cyan);
+        }
+
+        .xor-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            max-width: 100%;
+            margin-top: 1rem;
+        }
+
+        .bit {
+            width: 35px;
+            height: 50px;
+            background: #111;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+
+        .bit.active {
+            border-color: var(--accent-magenta);
+            color: var(--accent-magenta);
+            background: rgba(255, 0, 234, 0.1);
+        }
+
+        /* Demo Flow */
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .flow-node {
+            text-align: center;
+            flex: 1;
+        }
+
+        .flow-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: var(--accent-magenta);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse { 50% { opacity: 0.3; transform: translateX(10px); } }
+        @keyframes pulse-rev { 50% { opacity: 0.3; transform: translateX(-10px); } }
+
+        .flow-arrow.reverse {
+            animation: pulse-rev 1.5s infinite;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 3rem;
+            right: 3rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-circ {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-circ:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .progress {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background: var(--accent-cyan);
+            transition: width 0.4s;
+        }
+
+        .team-member {
+            font-size: 1.5rem;
+            margin: 5px 0;
+            color: var(--text-primary);
+        }
+
+        .roadmap-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .roadmap-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 242, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--accent-cyan);
+            border: 1px solid var(--glass-border);
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div id="bg-image"></div>
+<div class="progress" id="progressBar"></div>
+
+<div class="container">
+    <!-- Slide 1: Welcome & Team -->
+    <div class="slide active">
+        <span style="color: var(--accent-magenta); font-weight: bold; letter-spacing: 2px;">PROJECT COMMAND CENTER</span>
+        <h1>Team Root</h1>
+        <div style="margin-top: 2rem;">
+            <div class="team-member">▹ Dally</div>
+            <div class="team-member">▹ Amatziah</div>
+            <div class="team-member">▹ Udita</div>
+        </div>
+        <p style="margin-top: 2rem; border: 1px solid var(--glass-border); padding: 1rem; border-radius: 10px; display: inline-block;">
+            <span style="color: var(--accent-green);">[!] SYSTEM READY:</span> Press Right Arrow to Begin.
+        </p>
+    </div>
+
+    <!-- Slide 2: User Awareness -->
+    <div class="slide">
+        <h2>Where is this tool used?</h2>
+        <div class="grid">
+            <div class="card">
+                <div style="font-size: 2rem;">💼</div>
+                <h3>Enterprise Security</h3>
+                <p style="font-size: 0.9rem;">Encrypting sensitive employee and financial records at rest (GDPR/HIPAA compliance).</p>
+            </div>
+            <div class="card">
+                <div style="font-size: 2rem;">☁️</div>
+                <h3>Cloud Forensics</h3>
+                <p style="font-size: 0.9rem;">Securing files before cloud upload so even the service provider cannot read them.</p>
+            </div>
+            <div class="card">
+                <div style="font-size: 2rem;">🛡️</div>
+                <h3>OS Hardening</h3>
+                <p style="font-size: 0.9rem;">Protecting system configuration files from unauthorized low-level tampering.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Achievements -->
+    <div class="slide">
+        <h2>What have we built so far?</h2>
+        <div class="grid">
+            <div class="card" style="border-left: 2px solid var(--accent-green);">
+                <h4 style="margin: 0;">Encryption Core</h4>
+                <p style="font-size: 0.9rem;">Hybrid Cipher Engine supporting Caesar (byte-shift) and XOR (bitwise-key) algorithms.</p>
+            </div>
+            <div class="card" style="border-left: 2px solid var(--accent-green);">
+                <h4 style="margin: 0;">Kernel IO Engine</h4>
+                <p style="font-size: 0.9rem;">Direct POSIX System Call wrapper (Open/Read/Write) for zero-abstraction performance.</p>
+            </div>
+            <div class="card" style="border-left: 2px solid var(--accent-green);">
+                <h4 style="margin: 0;">Ncurses UI</h4>
+                <p style="font-size: 0.9rem;">The terminal-driven menu system for intuitive user interaction without a heavy GUI.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Strategic Learnings -->
+    <div class="slide">
+        <h2>Strategic Learnings</h2>
+        <p>This project was about understanding the OS kernel and data integrity.</p>
+        <div class="grid">
+            <div class="card">
+                <h3 style="color: var(--accent-cyan); margin: 0;">Syscalls</h3>
+                <p style="font-size: 0.9rem;">Mastering the mode shift between user-space and privileged kernel operations.</p>
+            </div>
+            <div class="card">
+                <h3 style="color: var(--accent-magenta); margin: 0;">Binary Data</h3>
+                <p style="font-size: 0.9rem;">Managing raw byte pointers and avoiding text-mode corruption during encryption.</p>
+            </div>
+            <div class="card">
+                <h3 style="color: var(--accent-green); margin: 0;">Boolean Logic</h3>
+                <p style="font-size: 0.9rem;">Deep understanding of XOR masking as the foundation of secure encryption.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: Interactive Caesar -->
+    <div class="slide">
+        <h2>Caesar Cipher Wheel</h2>
+        <p>Input a shift key to see the rotation in the ASCII character space.</p>
+        <div class="wheel-container">
+            <div class="wheel" id="caesarWheel"></div>
+        </div>
+        <div class="input-group">
+            <input type="number" id="caesarInput" value="5" min="0" max="25">
+            <button class="action-btn" onclick="runCaesar()">ROTATE & SHIFT</button>
+        </div>
+        <p id="caesarResult" style="text-align: center; color: var(--accent-magenta); font-weight: bold;">Mapping: A → F</p>
+    </div>
+
+    <!-- Slide 6: Interactive XOR -->
+    <div class="slide">
+        <h2>Interactive XOR Mask</h2>
+        <p>Flip the input bits and apply a mask to see the result. Fixed-width stable UI.</p>
+        <div class="xor-grid" id="xorInputGrid"></div>
+        <div class="xor-grid" style="color: var(--accent-cyan); margin: 5px 0;">⊕ (MASKING) ⊕</div>
+        <div class="xor-grid" id="xorKeyGrid"></div>
+        <div class="xor-grid" style="color: var(--accent-magenta); margin: 5px 0;">= (RESULT) =</div>
+        <div class="xor-grid" id="xorOutputGrid"></div>
+        <div class="input-group">
+            <button class="action-btn" onclick="applyXOR()" style="background: var(--accent-magenta); color: white;">EXECUTE XOR OPERATION</button>
+        </div>
+    </div>
+
+    <!-- Slide 7: Complete Visual Demo -->
+    <div class="slide">
+        <h2>Project Demo: Bidirectional Flow</h2>
+        <div class="flow-container">
+            <!-- Row 1: Encryption -->
+            <div class="flow-row">
+                <div class="flow-node"><div class="flow-icon">📄</div><p style="font-size: 0.8rem;">Plaintext</p></div>
+                <div class="flow-arrow">➜</div>
+                <div class="flow-node"><div class="card" style="padding: 10px;"><b>ENCRYPT</b></div></div>
+                <div class="flow-arrow">➜</div>
+                <div class="flow-node"><div class="flow-icon">🔒</div><p style="font-size: 0.8rem;">Ciphertext</p></div>
+            </div>
+            <!-- Row 2: Decryption -->
+            <div class="flow-row" style="margin-top: 1rem;">
+                <div class="flow-node"><div class="flow-icon">🔒</div><p style="font-size: 0.8rem;">Ciphertext</p></div>
+                <div class="flow-arrow reverse">⬅</div>
+                <div class="flow-node"><div class="card" style="padding: 10px; border-color: var(--accent-magenta);"><b>DECRYPT</b></div></div>
+                <div class="flow-arrow reverse">⬅</div>
+                <div class="flow-node"><div class="flow-icon">📄</div><p style="font-size: 0.8rem;">Plaintext</p></div>
+            </div>
+        </div>
+        <p style="text-align: center; font-size: 1rem; color: var(--accent-green);">A seamless transition between security and accessibility.</p>
+    </div>
+
+    <!-- Slide 8: What's Next -->
+    <div class="slide">
+        <h2>What's Next: Phase 2</h2>
+        <p>Evolution towards a Full Encryption Suite with advanced OS integration.</p>
+        <div class="grid">
+            <div class="card">
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">⚙️</div>
+                    <div>
+                        <h4 style="margin:0;">Multi-Process engine</h4>
+                        <p style="font-size: 0.8rem; margin:0;">Using <code>fork()</code> for parallel, lightning-fast processing.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">📧</div>
+                    <div>
+                        <h4 style="margin:0;">IPC & Pipes</h4>
+                        <p style="font-size: 0.8rem; margin:0;">Inter-process communication for secure key exchange.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">📁</div>
+                    <div>
+                        <h4 style="margin:0;">Recursive Directory</h4>
+                        <p style="font-size: 0.8rem; margin:0;">Encryping entire folders and subfolders in one go.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">🛡️</div>
+                    <div>
+                        <h4 style="margin:0;">Secure Key Store</h4>
+                        <p style="font-size: 0.8rem; margin:0;">File-based encrypted key containers for extra safety.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 9: Conclusion -->
+    <div class="slide" style="align-items: center; text-align: center;">
+        <span style="color: var(--accent-magenta); font-weight: bold; letter-spacing: 5px;">SESSION TERMINATED</span>
+        <h1>Thank You!</h1>
+        <p>Root Team: Dally, Amatziah & Udita</p>
+        <div style="margin-top: 3rem;">
+            <div class="nav-circ" style="width: auto; padding: 0 30px; border-radius: 10px; display: inline-block; cursor: pointer;" onclick="currentSlide=0; update();">RESTART SESSION</div>
+        </div>
+    </div>
+</div>
+
+<div class="nav">
+    <div class="nav-circ" onclick="prev()">←</div>
+    <div class="nav-circ" onclick="next()">→</div>
+</div>
+
+<script>
+    /* Particles background */
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let pArray = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.onresize = resize; resize();
+    class P { constructor() { this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.v=Math.random()*0.5; }
+        draw(){ ctx.fillStyle='rgba(0, 242, 255, 0.15)'; ctx.beginPath(); ctx.arc(this.x, this.y, 1, 0, Math.PI*2); ctx.fill(); }
+        update(){ this.y -= this.v; if(this.y < 0) this.y = canvas.height; }
+    }
+    for(let i=0; i<100; i++) pArray.push(new P());
+    function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); pArray.forEach(p=>{p.draw();p.update();}); requestAnimationFrame(anim); }
+    anim();
+
+    /* Slide Logic */
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const bar = document.getElementById('progressBar');
+    function update() {
+        slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+        bar.style.width = ((currentSlide + 1) / slides.length) * 100 + '%';
+        if(currentSlide === 4) initCaesar();
+        if(currentSlide === 5) initXOR();
+    }
+    function next() { currentSlide = (currentSlide+1)%slides.length; update(); }
+    function prev() { currentSlide = (currentSlide-1+slides.length)%slides.length; update(); }
+    document.onkeydown = (e) => { if(e.key === 'ArrowRight') next(); if(e.key === 'ArrowLeft') prev(); };
+
+    /* Caesar Logic */
+    function initCaesar() {
+        const w = document.getElementById('caesarWheel');
+        w.innerHTML = '';
+        const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        alpha.forEach((c, i) => {
+            const d = document.createElement('div');
+            d.className = 'wheel-char';
+            d.innerText = c;
+            const ang = (i / 26) * Math.PI * 2;
+            d.style.left = 110 + Math.cos(ang)*85 - 15 + 'px';
+            d.style.top = 110 + Math.sin(ang)*85 - 15 + 'px';
+            w.appendChild(d);
+        });
+    }
+    function runCaesar() {
+        const val = parseInt(document.getElementById('caesarInput').value) || 0;
+        const wheel = document.getElementById('caesarWheel');
+        wheel.style.transform = `rotate(${-val * (360/26)}deg)`;
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        document.getElementById('caesarResult').innerText = `Mapping: A → ${letters[val % 26] || '?'}`;
+    }
+
+    /* XOR Logic */
+    function initXOR() {
+        const iGrid = document.getElementById('xorInputGrid');
+        const kGrid = document.getElementById('xorKeyGrid');
+        const oGrid = document.getElementById('xorOutputGrid');
+        iGrid.innerHTML = kGrid.innerHTML = oGrid.innerHTML = '';
+        for(let i=0; i<8; i++) {
+            createBit(iGrid, Math.round(Math.random()), i, 'input');
+            createBit(kGrid, Math.round(Math.random()), i, 'key');
+            createBit(oGrid, '?', i, 'output');
+        }
+    }
+    function createBit(p, v, i, type) {
+        const d = document.createElement('div');
+        d.className = 'bit';
+        d.innerText = v;
+        if(type !== 'output') d.onclick = () => { d.innerText = d.innerText === '0' ? '1' : '0'; };
+        p.appendChild(d);
+    }
+    function applyXOR() {
+        const is = document.getElementById('xorInputGrid').children;
+        const ks = document.getElementById('xorKeyGrid').children;
+        const os = document.getElementById('xorOutputGrid').children;
+        for(let i=0; i<8; i++) {
+            const res = parseInt(is[i].innerText) ^ parseInt(ks[i].innerText);
+            os[i].innerText = res;
+            os[i].classList.add('active');
+            setTimeout(() => os[i].classList.remove('active'), 500);
+        }
+    }
+
+    update();
+</script>
+
+</body>
+</html>
