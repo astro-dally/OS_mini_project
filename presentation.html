@@ -10,10 +10,10 @@
             --bg-primary: #0a0a0f;
             --bg-secondary: #12121a;
             --bg-card: rgba(255, 255, 255, 0.03);
-            --accent-cyan: #00d4ff;
-            --accent-purple: #a855f7;
-            --accent-green: #22c55e;
-            --accent-orange: #f97316;
+            --accent-cyan: #14b8a6; /* Teal */
+            --accent-purple: #3b82f6; /* Blue */
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
             --accent-red: #ef4444;
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.7);
@@ -44,8 +44,8 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 20%, rgba(20, 184, 166, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
                 radial-gradient(ellipse at 50% 50%, rgba(34, 197, 94, 0.03) 0%, transparent 70%);
             z-index: 0;
         }
@@ -83,16 +83,28 @@
             overflow-y: auto;
         }
 
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 212, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+        }
+
+        @keyframes checkPing {
+            0% { transform: scale(1); background: rgba(34, 197, 94, 0.1); }
+            50% { transform: scale(1.1); background: rgba(34, 197, 94, 0.4); }
+            100% { transform: scale(1); background: rgba(34, 197, 94, 0.1); }
+        }
+
         .slide.active {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            animation: slideIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .slide-content {
@@ -266,11 +278,19 @@
         }
 
         .feature-list li {
-            padding: 0.6rem 0;
-            padding-left: 1.75rem;
+            padding: 0.6rem 0.5rem; /* Added horizontal padding */
+            padding-left: 2rem;
             position: relative;
             color: var(--text-secondary);
             font-size: 0.95rem;
+            transition: all 0.2s;
+            border-radius: 6px;
+        }
+
+        .feature-list li:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
+            padding-left: 2.25rem; /* Slight shift */
         }
 
         .feature-list li::before {
@@ -324,6 +344,8 @@
             justify-content: center;
             font-size: 1.75rem;
             font-weight: bold;
+            color: #fff;
+            animation: pulse 3s infinite;
         }
 
         .team-member h4 {
@@ -513,23 +535,39 @@
 
         /* CLI Terminal Replica */
         .exact-terminal {
-            background-color: #000000;
+            background-color: #0b0b0f; /* Slightly lighter black for contrast */
             color: #cccccc;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 20px;
-            border-radius: 8px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace; /* Better font stack */
+            padding: 25px;
+            border-radius: 12px;
             border: 1px solid #333;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             white-space: pre;
-            line-height: 1.2;
+            line-height: 1.3;
             overflow-x: auto;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            position: relative;
+        }
+        
+        /* Scanline effect */
+        .exact-terminal::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.02));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
         }
 
-        .term-banner-border { color: #ffffff; }
-        .term-banner-text { color: #00ffff; font-weight: bold; }
-        .term-menu-border { color: #ff00ff; font-weight: bold; }
-        .term-menu-title { color: #ff00ff; font-weight: bold; }
+        .term-banner-border { color: #ffffff; text-shadow: 0 0 2px rgba(255,255,255,0.3); }
+        .term-banner-text { color: #00ffff; font-weight: bold; text-shadow: 0 0 5px rgba(0,255,255,0.4); }
+        .term-menu-border { color: #ff00ff; font-weight: bold; text-shadow: 0 0 5px rgba(255,0,255,0.4); }
+        .term-menu-title { color: #ff00ff; font-weight: bold; text-shadow: 0 0 5px rgba(255,0,255,0.4); }
         .term-item { color: #ffffff; }
         .term-manage { color: #ffff00; }
         
@@ -706,8 +744,41 @@
             </div>
         </div>
 
-        <!-- SLIDE 5: Algorithms (with fixed code) -->
+        <!-- SLIDE: Live Demo -->
         <div class="slide" data-slide="4">
+            <div class="slide-content">
+                <h2>Live Encryption Playground</h2>
+                <p class="subtitle">Type below to see encryption in action</p>
+                
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center;">
+                    <!-- Algorithm Select -->
+                    <div style="background: var(--bg-secondary); padding: 4px; border-radius: 8px; display: flex; gap: 4px;">
+                        <button class="nav-btn" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: 6px;" onclick="setDemoMode('caesar')" id="btnCaesar">Caesar</button>
+                        <button class="nav-btn" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: 6px; opacity: 0.5;" onclick="setDemoMode('xor')" id="btnXor">XOR</button>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-left: 1rem;">
+                        <label style="color: var(--text-secondary); font-size: 0.9rem;">Key:</label>
+                        <input type="number" id="liveKey" value="3" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--accent-cyan); padding: 0.4rem; border-radius: 6px; width: 60px; font-family: 'JetBrains Mono'; text-align: center;">
+                    </div>
+                </div>
+
+                <div class="two-col">
+                    <div>
+                        <h3 style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">PLAINTEXT</h3>
+                        <textarea id="liveInput" placeholder="Type plaintext here..." style="width: 100%; height: 150px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 1rem; border-radius: 8px; font-family: 'JetBrains Mono'; resize: none;"></textarea>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">CIPHERTEXT</h3>
+                        <textarea id="liveOutput" placeholder="Or type ciphertext here..." style="width: 100%; height: 150px; background: var(--bg-secondary); border: 1px solid var(--border); color: var(--accent-green); padding: 1rem; border-radius: 8px; font-family: 'JetBrains Mono'; resize: none;"></textarea>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">* Bidirectional: Type in either box!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Algorithms (with fixed code) -->
+        <div class="slide" data-slide="5">
             <div class="slide-content">
                 <h2>Encryption Algorithms</h2>
                 <div class="two-col">
@@ -736,7 +807,7 @@
         </div>
 
         <!-- SLIDE 6 (Restored): Hex Dump -->
-        <div class="slide" data-slide="5">
+        <div class="slide" data-slide="6">
             <div class="slide-content">
                 <h2>Binary-Level Transformation</h2>
                 <p class="subtitle">How encryption modifies file contents at the byte level</p>
@@ -777,10 +848,10 @@
         </div>
 
         <!-- SLIDE 7: Authentic CLI & Menu -->
-        <div class="slide" data-slide="6">
+        <div class="slide" data-slide="7">
             <div class="slide-content">
                 <h2>Project Authenticity</h2>
-                <p class="subtitle">Exact replication of the project's ncurses Interface and CLI ASCII Art.</p>
+                <p class="subtitle">Exact replication of the project's ncurses interface and CLI ASCII art.</p>
                 <div class="exact-terminal">
 <span class="term-banner-border">+==================================================================+</span>
 <span class="term-banner-border">|</span>  _____ _   _  ____ ______   _______ _____ ___  _   _            <span class="term-banner-border">|</span>
@@ -788,7 +859,7 @@
 <span class="term-banner-border">|</span> |  _| |  \| | |   | |_) \ V /  | || |   | | | |  \| |           <span class="term-banner-border">|</span>
 <span class="term-banner-border">|</span> | |___| |\  | |___|  _ < | |   | || |___| |_| | |\  |           <span class="term-banner-border">|</span>
 <span class="term-banner-border">|</span> |_____|_| \_|\____|_| \_\|_|   |_| \_____\___/|_| \_|           <span class="term-banner-border">|</span>
-<span class="term-banner-border">|</span>                                                                  <span class="term-banner-border">|</span>
+<span class="term-banner-border">|</span>                                                                 <span class="term-banner-border">|</span>
 <span class="term-banner-border">|</span>            <span class="term-banner-text">[*] File Encryption & Decryption Tool [*]</span>            <span class="term-banner-border">|</span>
 <span class="term-banner-border">|</span>                      <span class="term-banner-text">OS Course Project</span>                          <span class="term-banner-border">|</span>
 <span class="term-banner-border">+==================================================================+</span>
@@ -807,7 +878,7 @@
         </div>
 
         <!-- SLIDE 8: Interactive Caesar Wheel -->
-        <div class="slide" data-slide="7">
+        <div class="slide" data-slide="8">
             <div class="slide-content">
                 <h2>Caesar Cipher Visualization</h2>
                 <p class="subtitle">Interactive wheel demonstrating the modular shift character mapping.</p>
@@ -828,7 +899,7 @@
         </div>
 
         <!-- SLIDE 9: Interactive XOR Demo -->
-        <div class="slide" data-slide="8">
+        <div class="slide" data-slide="9">
             <div class="slide-content">
                 <h2>Live XOR Cipher Demo</h2>
                 <p class="subtitle">Interactive bitwise operation. Click the bits to toggle them.</p>
@@ -854,46 +925,45 @@
             </div>
         </div>
         
-         <!-- SLIDE 10 (Restored): Features & Testing -->
-        <div class="slide" data-slide="9">
+        </div>
+
+        <!-- SLIDE 11: Key Features (Revamped) -->
+        <div class="slide" data-slide="10">
             <div class="slide-content">
-                <h2>Features & Testing</h2>
-                 <div class="two-col">
-                    <div>
-                        <h3>✅ Implemented Features</h3>
-                        <ul class="feature-list">
-                            <li>Caesar Cipher (byte-level shift)</li>
-                            <li>XOR Cipher (password-based)</li>
-                            <li>Binary file support (O_BINARY)</li>
-                            <li>Interactive ncurses-based UI</li>
-                            <li>Progress indicators for large files</li>
-                            <li>Memory-safe buffer management</li>
-                        </ul>
+                <h2>Key Features</h2>
+                <p class="subtitle">Core capabilities of the system</p>
+                 <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="card" style="text-align: center;">
+                        <div class="card-icon" style="color: var(--accent-cyan);">0101</div>
+                        <h4>Binary Support</h4>
+                        <p>Handles any file type (images, PDFs) using `O_BINARY`.</p>
                     </div>
-                    <div>
-                        <h3>🧪 Test Results</h3>
-                        <div class="card" style="margin-bottom: 0.5rem; padding: 0.75rem;">
-                             <div style="display: flex; justify-content: space-between;">
-                                <span>Text file (1KB - 10MB)</span> <span class="badge badge-success">PASS</span>
-                            </div>
-                        </div>
-                        <div class="card" style="margin-bottom: 0.5rem; padding: 0.75rem;">
-                             <div style="display: flex; justify-content: space-between;">
-                                <span>Binary file (images, PDFs)</span> <span class="badge badge-success">PASS</span>
-                            </div>
-                        </div>
-                         <div class="card" style="padding: 0.75rem;">
-                             <div style="display: flex; justify-content: space-between;">
-                                <span>Round-trip (enc → dec)</span> <span class="badge badge-success">PASS</span>
-                            </div>
-                        </div>
+                    <div class="card" style="text-align: center;">
+                        <div class="card-icon" style="color: var(--accent-purple);">🖥️</div>
+                        <h4>Interactive UI</h4>
+                        <p>Rich ncurses menu system for ease of use.</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <div class="card-icon" style="color: var(--accent-orange);">⚡</div>
+                        <h4>CLI Mode</h4>
+                        <p>Scriptable command-line arguments for automation.</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <div class="card-icon" style="color: var(--accent-green);">🛡️</div>
+                        <h4>Memory Safe</h4>
+                        <p>Valgrind-verified memory management.</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <div class="card-icon" style="color: var(--accent-red);">🐧</div>
+                        <h4>POSIX API</h4>
+                        <p>Direct system calls for max performance.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 11 (Restored): Challenges -->
-        <div class="slide" data-slide="10">
+        <!-- SLIDE 12 (Restored): Challenges -->
+        <div class="slide" data-slide="11">
             <div class="slide-content">
                 <h2>Challenges & Learnings</h2>
                 <div class="card-grid">
@@ -916,8 +986,8 @@
             </div>
         </div>
 
-        <!-- SLIDE 12: What's Next -->
-        <div class="slide" data-slide="11">
+        <!-- SLIDE 13: What's Next -->
+        <div class="slide" data-slide="12">
              <div class="slide-content">
                 <h2>What's Next: Phase 2</h2>
                 <div class="card-grid">
@@ -933,15 +1003,15 @@
                     </div>
                     <div class="card">
                         <div class="card-icon">📁</div>
-                        <h4>Recursive Directory</h4>
+                        <h4>Recursive Directory Encryption</h4>
                         <p>Encrypting entire folder structures.</p>
                     </div>
                 </div>
              </div>
         </div>
 
-         <!-- SLIDE 13: END -->
-         <div class="slide" data-slide="12">
+         <!-- SLIDE 14: END -->
+         <div class="slide" data-slide="13">
             <div class="slide-content" style="text-align: center;">
                 <h1>Thank You</h1>
                 <p class="subtitle">Questions & Discussion</p>
@@ -955,11 +1025,7 @@
                     </div>
                 </div>
                 
-                <div style="margin-top: 3rem;">
-                    <button class="nav-btn" style="width: auto; padding: 0 2rem; border-radius: 20px; font-size: 1rem;" onclick="location.reload()">
-                        Restart Session
-                    </button>
-                </div>
+                <!-- Button removed as requested -->
             </div>
          </div>
 
@@ -968,7 +1034,7 @@
     <!-- Navigation Overlay -->
     <div class="nav">
         <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">←</button>
-        <div class="slide-counter" id="slideCounter">1 / 13</div>
+        <div class="slide-counter" id="slideCounter">1 / 14</div>
         <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">→</button>
     </div>
 
@@ -989,18 +1055,24 @@
             const progress = ((currentSlide + 1) / totalSlides) * 100;
             progressBar.style.width = `${progress}%`;
             slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+            
+            // Re-init visuals if needed
+            if(currentSlide === 8) setTimeout(initCaesarWheel, 100); // Caesar is now Slide 8 (+1 shift due to new slide)
         }
 
         function changeSlide(dir) {
             currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
             updateSlide();
-            
-            // Re-init visuals if needed
-            if(currentSlide === 7) initCaesarWheel(); // Slide 8 is index 7
         }
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+            // Prevent navigation if user is typing in an input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault(); // Prevent default scroll behavior for space
+                changeSlide(1);
+            }
             if (e.key === 'ArrowLeft') changeSlide(-1);
         });
 
@@ -1083,21 +1155,126 @@
                 // Result bits
                 const bRes = document.createElement('div');
                 bRes.className = 'bit-box result';
+                if(i === lastToggledIndex) {
+                     bRes.style.animation = 'checkPing 0.3s ease';
+                }
                 // Calc initial
                 bRes.textContent = xorInputState[i] ^ xorKeyState[i];
                 resRow.appendChild(bRes);
             }
         }
 
+        let lastToggledIndex = -1;
         function toggleXorBit(idx) {
             xorInputState[idx] = xorInputState[idx] ? 0 : 1;
+            lastToggledIndex = idx;
             initXOR(); // Re-render
         }
 
+        // Live Demo Logic (Bidirectional)
+        let demoMode = 'caesar';
+
+        const liveInput = document.getElementById('liveInput'); // Plaintext
+        const liveOutput = document.getElementById('liveOutput'); // Ciphertext
+        const liveKey = document.getElementById('liveKey');
+
+        function setDemoMode(mode) {
+            demoMode = mode;
+            
+            // UI Toggle
+            document.getElementById('btnCaesar').style.opacity = demoMode === 'caesar' ? 1 : 0.5;
+            document.getElementById('btnXor').style.opacity = demoMode === 'xor' ? 1 : 0.5;
+
+            // Key Input Type
+            if(demoMode === 'xor') {
+                liveKey.type = 'text';
+                if(!isNaN(liveKey.value)) liveKey.value = 'secret'; 
+                liveKey.style.width = '120px';
+                liveOutput.placeholder = "Hex output (e.g. 5a 2f)";
+            } else {
+                liveKey.type = 'number';
+                if(isNaN(liveKey.value)) liveKey.value = '3';
+                liveKey.style.width = '60px';
+                liveOutput.placeholder = "Ciphertext...";
+            }
+            
+            // Re-run encryption to match new mode
+            processEncryption('encrypt');
+        }
+
+        // direction: 'encrypt' (Input -> Output) or 'decrypt' (Output -> Input)
+        function processEncryption(direction) {
+            const source = direction === 'encrypt' ? liveInput : liveOutput;
+            const target = direction === 'encrypt' ? liveOutput : liveInput;
+            const text = source.value;
+            let result = '';
+
+            if (!text) {
+                target.value = '';
+                return;
+            }
+
+            if(demoMode === 'caesar') {
+                let shift = parseInt(liveKey.value) || 0;
+                if (direction === 'decrypt') shift = -shift;
+
+                for(let i=0; i<text.length; i++) {
+                    let charCode = text.charCodeAt(i);
+                    // Simple shift for demo (ASCII printable)
+                    if(charCode >= 32 && charCode <= 126) {
+                        let moved = (charCode - 32 + shift) % 95;
+                        if (moved < 0) moved += 95;
+                        result += String.fromCharCode(32 + moved);
+                    } else {
+                        result += text[i];
+                    }
+                }
+            } else {
+                // XOR logic
+                const key = liveKey.value || 'k';
+                
+                if (direction === 'encrypt') {
+                    // Plaintext -> Hex
+                    for(let i=0; i<text.length; i++) {
+                        const kChar = key.charCodeAt(i % key.length);
+                        const tChar = text.charCodeAt(i);
+                        const xored = tChar ^ kChar;
+                        result += xored.toString(16).padStart(2, '0') + ' ';
+                    }
+                } else {
+                    // Hex -> Plaintext
+                    const hexParts = text.trim().split(/\s+/);
+                    for(let i=0; i<hexParts.length; i++) {
+                        if(!hexParts[i]) continue;
+                        const charCode = parseInt(hexParts[i], 16);
+                        if(isNaN(charCode)) {
+                             // Skip invalid hex or show placeholders
+                             continue;
+                        }
+                        const kChar = key.charCodeAt(i % key.length);
+                        const xored = charCode ^ kChar;
+                        result += String.fromCharCode(xored);
+                    }
+                }
+            }
+            target.value = result;
+        }
+
+        // Listeners for bidirectional typing
+        liveInput.addEventListener('input', () => processEncryption('encrypt'));
+        liveOutput.addEventListener('input', () => processEncryption('decrypt'));
+        liveKey.addEventListener('input', () => processEncryption('encrypt')); // specific choice to update output on key change
+
+
         // Init
-        updateSlide();
-        setTimeout(initCaesarWheel, 500);
-        initXOR();
+        document.addEventListener('DOMContentLoaded', () => {
+             updateSlide();
+             // Pre-init visuals
+             initCaesarWheel();
+             initXOR();
+             setDemoMode('caesar');
+             // No need for updateDemoUI, setDemoMode handles it
+        });
 
     </script>
 </body>
