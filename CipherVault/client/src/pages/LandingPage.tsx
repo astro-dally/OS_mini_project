@@ -752,9 +752,35 @@ export default function LandingPage() {
     audioRef.current.loop = true;
     audioRef.current.volume = 0.45;
 
+    // Attempt autoplay
+    const playAudio = () => {
+      audioRef.current?.play().then(() => {
+        setIsMusicPlaying(true);
+      }).catch(() => {
+        console.log('Autoplay blocked, waiting for interaction.');
+      });
+    };
+
+    // Try immediately
+    playAudio();
+
+    // Interaction fallback to bypass browser blocks
+    const handleFirstInteraction = () => {
+      if (!isMusicPlaying) {
+        playAudio();
+      }
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('keydown', handleFirstInteraction);
+
     return () => {
       audioRef.current?.pause();
       audioRef.current = null;
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
     };
   }, []);
 
@@ -764,7 +790,7 @@ export default function LandingPage() {
       audioRef.current.pause();
     } else {
       audioRef.current.play().catch(() => {
-        toast.error('Engagement required to start broadcast.', {
+        toast.error('System connection required.', {
           style: { background: '#080d14', color: '#00ff88', border: '1px solid #00ff8820', fontSize: '10px', fontWeight: 'bold' },
         });
       });
