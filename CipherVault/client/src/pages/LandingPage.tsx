@@ -752,21 +752,21 @@ export default function LandingPage() {
     audioRef.current.loop = true;
     audioRef.current.volume = 0.45;
 
-    // Attempt autoplay
+    // Simplified playAudio that ensures state is updated if successful
     const playAudio = () => {
       audioRef.current?.play().then(() => {
         setIsMusicPlaying(true);
-      }).catch(() => {
-        console.log('Autoplay blocked, waiting for interaction.');
+      }).catch((err) => {
+        console.log('Audio play blocked or failed:', err);
       });
     };
 
     // Try immediately
     playAudio();
 
-    // Interaction fallback to bypass browser blocks
+    // Interaction fallback should use the ACTUAL audio element state to avoid stale closure issues
     const handleFirstInteraction = () => {
-      if (!isMusicPlaying) {
+      if (audioRef.current && audioRef.current.paused) {
         playAudio();
       }
       window.removeEventListener('click', handleFirstInteraction);
@@ -777,8 +777,10 @@ export default function LandingPage() {
     window.addEventListener('keydown', handleFirstInteraction);
 
     return () => {
-      audioRef.current?.pause();
-      audioRef.current = null;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
       window.removeEventListener('click', handleFirstInteraction);
       window.removeEventListener('keydown', handleFirstInteraction);
     };
@@ -786,16 +788,18 @@ export default function LandingPage() {
 
   const toggleMusic = () => {
     if (!audioRef.current) return;
-    if (isMusicPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play().catch(() => {
+    if (audioRef.current.paused) {
+      audioRef.current.play().then(() => {
+        setIsMusicPlaying(true);
+      }).catch(() => {
         toast.error('System connection required.', {
           style: { background: '#080d14', color: '#00ff88', border: '1px solid #00ff8820', fontSize: '10px', fontWeight: 'bold' },
         });
       });
+    } else {
+      audioRef.current.pause();
+      setIsMusicPlaying(false);
     }
-    setIsMusicPlaying(!isMusicPlaying);
   };
 
   const heroRef = useRef<HTMLElement>(null);
@@ -1554,8 +1558,8 @@ export default function LandingPage() {
         <button
           onClick={toggleMusic}
           className={`group flex items-center justify-center w-10 h-10 rounded-full border backdrop-blur-md transition-all duration-500 ${isMusicPlaying
-              ? 'bg-vault-accent/20 border-vault-accent/50 text-vault-accent shadow-[0_0_15px_rgba(0,255,136,0.3)]'
-              : 'bg-white/5 border-white/10 text-gray-500 hover:border-white/30 hover:text-white'
+            ? 'bg-vault-accent/20 border-vault-accent/50 text-vault-accent shadow-[0_0_15px_rgba(0,255,136,0.3)]'
+            : 'bg-white/5 border-white/10 text-gray-500 hover:border-white/30 hover:text-white'
             }`}
           title={isMusicPlaying ? 'Stop Music' : 'Start Music'}
         >
