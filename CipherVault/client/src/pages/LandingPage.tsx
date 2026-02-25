@@ -1544,6 +1544,50 @@ export default function LandingPage() {
         a, button, input, label, select { cursor: pointer; }
         input { cursor: text; }
       `}</style>
+      {/* Small Floating Music Toggle */}
+      <motion.div
+        className="fixed bottom-6 left-6 z-[100]"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1 }}
+      >
+        <button
+          onClick={toggleMusic}
+          className={`group flex items-center justify-center w-10 h-10 rounded-full border backdrop-blur-md transition-all duration-500 ${isMusicPlaying
+              ? 'bg-vault-accent/20 border-vault-accent/50 text-vault-accent shadow-[0_0_15px_rgba(0,255,136,0.3)]'
+              : 'bg-white/5 border-white/10 text-gray-500 hover:border-white/30 hover:text-white'
+            }`}
+          title={isMusicPlaying ? 'Stop Music' : 'Start Music'}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={isMusicPlaying ? 'playing' : 'paused'}
+              initial={{ opacity: 0, rotate: -20 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: 20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {isMusicPlaying ? (
+                <div className="relative flex items-center justify-center">
+                  <HiOutlineSpeakerWave className="w-4 h-4" />
+                  <div className="absolute -top-1 -right-1 flex gap-[1px]">
+                    {[0, 1].map(i => (
+                      <motion.div
+                        key={i}
+                        className="w-[1.5px] bg-vault-accent rounded-full"
+                        animate={{ height: ['2px', '6px', '2px'] }}
+                        transition={{ duration: 0.4 + i * 0.1, repeat: Infinity }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <HiOutlineSpeakerXMark className="w-4 h-4" />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </button>
+      </motion.div>
     </>
   );
 }
