@@ -216,17 +216,87 @@ export default function RoomDetailPage() {
 
           <AnimatePresence>
             {showUpload && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="glass-card p-5 space-y-3">
-                <input type="file" onChange={(e) => setUploadFile(e.target.files?.[0] || null)} className="cyber-input" />
-                <div className="grid grid-cols-2 gap-3">
-                  <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)} className="cyber-input">
-                    <option value="AES-GCM">AES-256-GCM</option>
-                    <option value="AES-CBC">AES-256-CBC</option>
-                    <option value="ChaCha20">ChaCha20</option>
-                  </select>
-                  <input value={passphrase} onChange={(e) => setPassphrase(e.target.value)} className="cyber-input" placeholder="Extra passphrase (optional)" type="password" />
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="glass-card p-6 space-y-4 border-vault-accent/20 bg-vault-accent/5"
+              >
+                {/* Custom File Selection Area */}
+                <div
+                  onClick={() => document.getElementById('room-file-input')?.click()}
+                  className={`relative group cursor-pointer border-2 border-dashed rounded-xl p-8 transition-all duration-300 text-center ${uploadFile ? 'border-vault-accent/50 bg-vault-accent/10' : 'border-vault-border hover:border-vault-accent/30 hover:bg-white/[0.02]'}`}
+                >
+                  <input
+                    id="room-file-input"
+                    type="file"
+                    onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                    className="hidden"
+                  />
+
+                  {uploadFile ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 rounded-full bg-vault-accent/20 flex items-center justify-center">
+                        <HiOutlineDocumentText className="w-6 h-6 text-vault-accent" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-bold text-white truncate max-w-[200px]">{uploadFile.name}</p>
+                        <p className="text-[10px] text-gray-500 uppercase tracking-widest">{(uploadFile.size / 1024).toFixed(1)} KB · Ready to encrypt</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-white/[0.03] flex items-center justify-center group-hover:bg-vault-accent/10 transition-colors">
+                        <HiOutlineCloudArrowUp className="w-6 h-6 text-gray-600 group-hover:text-vault-accent" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-gray-400">Click to select file</p>
+                        <p className="text-[10px] text-gray-600 uppercase tracking-widest">No file chosen</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <button onClick={handleUpload} className="cyber-btn-primary" disabled={!uploadFile}>Encrypt & Upload</button>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Algorithm</label>
+                    <select
+                      value={algorithm}
+                      onChange={(e) => setAlgorithm(e.target.value)}
+                      className="cyber-input bg-vault-bg/50"
+                    >
+                      <option value="AES-GCM">AES-256-GCM</option>
+                      <option value="AES-CBC">AES-256-CBC</option>
+                      <option value="ChaCha20">ChaCha20-Poly1305</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Encryption Passphrase</label>
+                    <input
+                      value={passphrase}
+                      onChange={(e) => setPassphrase(e.target.value)}
+                      className="cyber-input bg-vault-bg/50"
+                      placeholder="Optional second layer"
+                      type="password"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={handleUpload}
+                    className="cyber-btn-primary flex-1 py-3"
+                    disabled={!uploadFile}
+                  >
+                    Encrypt & Upload to Room
+                  </button>
+                  <button
+                    onClick={() => { setShowUpload(false); setUploadFile(null); }}
+                    className="px-4 rounded-xl border border-vault-border hover:bg-white/[0.05] transition-colors text-gray-400"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
